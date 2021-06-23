@@ -5,8 +5,10 @@ export default function App() {
   const url = 'https://randomuser.me/api/?results=20'
   const [immutableData, setImmutableData] = useState([])
   const [data, setData] = useState([])
+  // keeps track of a column that is clicked repeatedly, to toggle asc or desc sorting
   const [sortMethod, setSortMethod] = useState({ filter: '', sortAsc: true })
 
+  // data fetching function
   const getData = () => {
     return fetch(url)
       .then((result) => result.json())
@@ -26,15 +28,18 @@ export default function App() {
           })
         })
 
+        // set an immutable data array for referencing searches
         setImmutableData(arr)
         setData(arr)
       })
   }
 
+  // fetch data from the API
   useEffect(() => {
     getData()
   }, [])
 
+  // render the data rows
   let renderedData = data.map((d) => {
     return (
       <tr key={d.login?.uuid}>
@@ -74,6 +79,7 @@ export default function App() {
       return
     }
 
+    // by default, sort the data by ascending order
     dataCopy.sort((a, b) => {
       if (a[col] < b[col]) return -1
       if (a[col] > b[col]) return 1
@@ -84,10 +90,12 @@ export default function App() {
     setSortMethod({ filter: col, sortAsc: false })
   }
 
+  // search function
   const handleSubmit = (e) => {
     e.preventDefault()
     const searchTerm = e.target[0].value
 
+    // searching the data
     const dataCopy = immutableData
     const result = dataCopy.filter((item) => {
       for (let i in item) {
